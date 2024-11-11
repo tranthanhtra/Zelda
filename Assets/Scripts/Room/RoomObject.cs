@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using static Utils.Constants;
 
-public class RoomObject : MonoBehaviour
+public class RoomObject : Singleton<RoomObject>
 {
     [SerializeField] private Tilemap tilemap;
 
@@ -23,17 +23,17 @@ public class RoomObject : MonoBehaviour
     // Start is called before the first frame update
 
     private Vector2Int sceneTileSize;
-    // private TileType[] roomTileData;
+    private TileType[] roomTileData;
     private Door[] doorWays;
 
     void Start()
     {
         sceneTileSize = new Vector2Int(RoomSize.x + 4, RoomSize.y + 4);
-        // roomTileData = new TileType[sceneTileSize.x * sceneTileSize.y];
-        var mostLeft = 0;
-        var mostRight = RoomSize.x;
-        var mostUp = RoomSize.y;
-        var mostDown = 0;
+        roomTileData = new TileType[sceneTileSize.x * sceneTileSize.y];
+        var mostLeft = 2;
+        var mostRight = RoomSize.x + 2;
+        var mostUp = RoomSize.y + 2;
+        var mostDown = 2;
 
         // Generate ground and wall tiles for the room
         for (var y = mostDown; y < mostUp + 1; y++)
@@ -44,7 +44,7 @@ public class RoomObject : MonoBehaviour
                 TileBase tile = GetTile(x, y);
 
                 // Set the tile in the room data and tilemap
-                // roomTileData[y * sceneTileSize.x + x] = GetTileType(x, y);
+                roomTileData[y * sceneTileSize.x + x] = GetTileType(x, y);
                 tilemap.SetTile(new Vector3Int(x, y, 0), tile);
             }
         }
@@ -152,39 +152,39 @@ public class RoomObject : MonoBehaviour
                 case DoorDirection.Left:
                     doorTiles = new Vector2Int[]
                     {
-                        new Vector2Int(mostLeft - 1, RoomSize.y / 2 + 1),
-                        new Vector2Int(mostLeft, RoomSize.y / 2 + 1),
-                        new Vector2Int(mostLeft, RoomSize.y / 2),
-                        new Vector2Int(mostLeft - 1, RoomSize.y / 2),
+                        new Vector2Int(mostLeft - 1, mostDown + RoomSize.y / 2 + 1),
+                        new Vector2Int(mostLeft, mostDown + RoomSize.y / 2 + 1),
+                        new Vector2Int(mostLeft, mostDown + RoomSize.y / 2),
+                        new Vector2Int(mostLeft - 1, mostDown + RoomSize.y / 2),
                     };
 
                     break;
                 case DoorDirection.Right:
                     doorTiles = new Vector2Int[]
                     {
-                        new Vector2Int(mostRight, RoomSize.y / 2 + 1),
-                        new Vector2Int(mostRight + 1, RoomSize.y / 2 + 1),
-                        new Vector2Int(mostRight + 1, RoomSize.y / 2),
-                        new Vector2Int(mostRight, RoomSize.y / 2),
+                        new Vector2Int(mostRight, mostDown + RoomSize.y / 2 + 1),
+                        new Vector2Int(mostRight + 1, mostDown + RoomSize.y / 2 + 1),
+                        new Vector2Int(mostRight + 1, mostDown + RoomSize.y / 2),
+                        new Vector2Int(mostRight, mostDown + RoomSize.y / 2),
                     };
                     break;
                 case DoorDirection.Down:
                     doorTiles = new Vector2Int[]
                     {
-                        new Vector2Int(RoomSize.x / 2, mostDown),
-                        new Vector2Int(RoomSize.x / 2 + 1, mostDown),
-                        new Vector2Int(RoomSize.x / 2 + 1, mostDown - 1),
-                        new Vector2Int(RoomSize.x / 2, mostDown - 1),
+                        new Vector2Int(mostLeft + RoomSize.x / 2, mostDown),
+                        new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostDown),
+                        new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostDown - 1),
+                        new Vector2Int(mostLeft + RoomSize.x / 2, mostDown - 1),
                     };
 
                     break;
                 case DoorDirection.Up:
                     doorTiles = new Vector2Int[]
                     {
-                        new Vector2Int(RoomSize.x / 2, mostUp + 1),
-                        new Vector2Int(RoomSize.x / 2 + 1, mostUp + 1),
-                        new Vector2Int(RoomSize.x / 2 + 1, mostUp),
-                        new Vector2Int(RoomSize.x / 2, mostUp),
+                        new Vector2Int(mostLeft + RoomSize.x / 2, mostUp + 1),
+                        new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostUp + 1),
+                        new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostUp),
+                        new Vector2Int(mostLeft + RoomSize.x / 2, mostUp),
                     };
 
                     break;
@@ -194,8 +194,24 @@ public class RoomObject : MonoBehaviour
         }
 
         SetupDoors();
-        tilemap.transform.position = new Vector3(-RoomSize.x / 2, -RoomSize.y / 2, 0);
+        tilemap.transform.position = new Vector3(-RoomSize.x / 2 - mostLeft, -RoomSize.y / 2 - mostDown, 0);
     }
+
+    #region Public Methods
+
+    public bool CheckInBounds (Vector2 position, Vector2 size, Vector2 direction)
+    {
+        Vector2 checkpoint = position + new Vector2(direction.x * size.x / 2, direction.y * size.y / 2) -
+                             (Vector2)tilemap.transform.position;
+
+        var tilePosition = new Vector2Int(Mathf.FloorToInt(checkpoint.x), Mathf.FloorToInt(checkpoint.y));
+
+        return roomTileData[tilePosition.y * sceneTileSize.x + tilePosition.x] == TileType.Ground;
+    }
+
+    #endregion
+
+    #region Private Methods
 
     private Door[] CalculateDoor()
     {
@@ -233,15 +249,12 @@ public class RoomObject : MonoBehaviour
             for (int i = 0; i < door.tiles.Length; i++)
             {
                 tilemap.SetTile(new Vector3Int(door.tiles[i].x, door.tiles[i].y, 0), tileArray[i]);
-                // roomTileData[door.tiles[i].y * sceneTileSize.x + door.tiles[i].x] = TileType.Door;
+                roomTileData[door.tiles[i].y * sceneTileSize.x + door.tiles[i].x] = TileType.Door;
             }
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
+    #endregion
 }
 
 public enum TileType
