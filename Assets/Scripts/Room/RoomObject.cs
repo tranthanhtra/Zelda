@@ -199,9 +199,11 @@ public class RoomObject : Singleton<RoomObject>
 
     #region Public Methods
 
-    public bool CheckInBounds (Vector2 position, Vector2 size, Vector2 direction)
+    public bool CheckInBounds(Entity entity, Vector2 direction)
     {
-        Vector2 checkpoint = position + new Vector2(direction.x * size.x / 2, direction.y * size.y / 2) -
+        Vector2 checkpoint = ((Vector2)entity.transform.position + Vector2.down *  entity.Collider2D.size.y/3) +
+                             new Vector2(direction.x * entity.Collider2D.size.x / 2,
+                                 direction.y * entity.Collider2D.size.y / 6) -
                              (Vector2)tilemap.transform.position;
 
         var tilePosition = new Vector2Int(Mathf.FloorToInt(checkpoint.x), Mathf.FloorToInt(checkpoint.y));

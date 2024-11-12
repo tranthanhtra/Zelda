@@ -7,27 +7,40 @@ public class Player : Entity
 {
     private void Update()
     {
-        
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            // Handle up key press
-            Debug.Log( "up");
-            GoUp();
+            if (RoomObject.Instance.CheckInBounds(this, Vector2.up))
+                // Handle up key press
+                GoUp();
+            else
+                Stop();
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            // Handle down key press
-            GoDown();
+            if (RoomObject.Instance.CheckInBounds(this, Vector2.down))
+                GoDown();
+            else
+                Stop();
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
-            // Handle left key press
-            GoLeft();
+            if (RoomObject.Instance.CheckInBounds(this, Vector2.left))
+                // Handle left key press
+                GoLeft();
+            else
+                Stop();
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            // Handle right key press
-            GoRight();
+            if (RoomObject.Instance.CheckInBounds(this, Vector2.right))
+                // Handle right key press
+                GoRight();
+            else
+                Stop();
+        }
+        else
+        {
+            Stop();
         }
     }
 }

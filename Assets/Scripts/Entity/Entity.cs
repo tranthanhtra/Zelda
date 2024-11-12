@@ -3,14 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public abstract class Entity : MonoBehaviour
 {
     public int hp;
     public float speed;
+    protected Vector2 movement;
 
-    private Rigidbody2D rigidbody2D;
-    private BoxCollider2D _collider2D;
+    protected Rigidbody2D rigidbody2D;
+    protected BoxCollider2D _collider2D;
+    
+    public BoxCollider2D Collider2D => _collider2D;
 
     private void Start()
     {
@@ -18,34 +22,33 @@ public abstract class Entity : MonoBehaviour
         _collider2D = GetComponent<BoxCollider2D>();
     }
 
+    protected virtual void FixedUpdate()
+    {
+        transform.Translate(movement * (speed * Time.deltaTime));
+    }
+
     protected void GoLeft()
     {
-        // transform.position = new Vector3(transform.position.x - speed, transform.position.y, transform.position.z);
-        if (RoomObject.Instance.CheckInBounds((Vector2)transform.position + _collider2D.offset, _collider2D.size,
-                Vector2.left))
-            transform.position = new Vector3(transform.position.x - speed, transform.position.y, transform.position.z);
+        movement = Vector2.left;
     }
 
     protected void GoRight()
     {
-        // transform.position = new Vector3(transform.position.x + speed, transform.position.y, transform.position.z);
-        if (RoomObject.Instance.CheckInBounds((Vector2)transform.position + _collider2D.offset, _collider2D.size,
-                Vector2.right))
-
-            transform.position = new Vector3(transform.position.x + speed, transform.position.y, transform.position.z);
+        movement = Vector2.right;
     }
 
     protected void GoUp()
     {
-        if (RoomObject.Instance.CheckInBounds((Vector2)transform.position + _collider2D.offset, _collider2D.size,
-                Vector2.up))
-            transform.position = new Vector3(transform.position.x, transform.position.y + speed, transform.position.z);
+        movement = Vector2.up;
     }
 
     protected void GoDown()
     {
-        if (RoomObject.Instance.CheckInBounds((Vector2)transform.position + _collider2D.offset, _collider2D.size,
-                Vector2.down))
-            transform.position = new Vector3(transform.position.x, transform.position.y - speed, transform.position.z);
+        movement = Vector2.down;
+    }
+
+    protected void Stop()
+    {
+        movement = Vector2.zero;
     }
 }
