@@ -13,18 +13,26 @@ public abstract class Entity : MonoBehaviour
 
     protected Rigidbody2D rigidbody2D;
     protected BoxCollider2D _collider2D;
-    
+    protected Animator animator;
+    private static readonly int Velocity = Animator.StringToHash("Velocity");
+    private static readonly int Vertical = Animator.StringToHash("Vertical");
+    private static readonly int Horizontal = Animator.StringToHash("Horizontal");
+
     public BoxCollider2D Collider2D => _collider2D;
 
     private void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         _collider2D = GetComponent<BoxCollider2D>();
+        animator = GetComponent<Animator>();
     }
 
     protected virtual void FixedUpdate()
     {
         transform.Translate(movement * (speed * Time.deltaTime));
+        animator.SetFloat(Horizontal, movement.x);
+        animator.SetFloat(Vertical, movement.y);
+        animator.SetFloat(Velocity, movement.sqrMagnitude);
     }
 
     protected void GoLeft()
