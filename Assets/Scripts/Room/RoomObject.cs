@@ -20,6 +20,8 @@ public class RoomObject : Singleton<RoomObject>
     [SerializeField] private TileBase[] doorTilesDownOpen, doorTilesDownClose;
 
     [SerializeField] private TileBase emptyTile;
+
+    [SerializeField] private Enemy enemyPrefab;
     // Start is called before the first frame update
 
     private Vector2Int sceneTileSize;
@@ -194,14 +196,16 @@ public class RoomObject : Singleton<RoomObject>
         }
 
         SetupDoors();
-        tilemap.transform.position = new Vector3(-RoomSize.x / 2 - mostLeft, -RoomSize.y / 2 - mostDown, 0);
+        GenerateEnemy();
+
+        transform.position = new Vector3(-RoomSize.x / 2 - mostLeft, -RoomSize.y / 2 - mostDown, 0);
     }
 
     #region Public Methods
 
     public bool CheckInBounds(Entity entity, Vector2 direction)
     {
-        Vector2 checkpoint = ((Vector2)entity.transform.position + Vector2.down *  entity.Collider2D.size.y/3) +
+        Vector2 checkpoint = ((Vector2)entity.transform.position + Vector2.down * entity.Collider2D.size.y / 3) +
                              new Vector2(direction.x * entity.Collider2D.size.x / 2,
                                  direction.y * entity.Collider2D.size.y / 6) -
                              (Vector2)tilemap.transform.position;
@@ -253,6 +257,15 @@ public class RoomObject : Singleton<RoomObject>
                 tilemap.SetTile(new Vector3Int(door.tiles[i].x, door.tiles[i].y, 0), tileArray[i]);
                 roomTileData[door.tiles[i].y * sceneTileSize.x + door.tiles[i].x] = TileType.Door;
             }
+        }
+    }
+
+    private void GenerateEnemy()
+    {
+        var numberOfEnemies = 4;
+        for (int i = 0; i < numberOfEnemies; i++)
+        {
+            var e = Instantiate(enemyPrefab);
         }
     }
 
