@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.U2D.Animation;
 using static Utils.Constants;
 
 public class RoomObject : Singleton<RoomObject>
@@ -22,6 +24,7 @@ public class RoomObject : Singleton<RoomObject>
     [SerializeField] private TileBase emptyTile;
 
     [SerializeField] private Enemy enemyPrefab;
+    [SerializeField] private SpriteLibraryAsset[] enemyAssets;
     // Start is called before the first frame update
 
     private Vector2Int sceneTileSize;
@@ -143,6 +146,19 @@ public class RoomObject : Singleton<RoomObject>
             }
         }
 
+        void GenerateEnemy()
+        {
+            var numberOfEnemies = 4;
+            for (int i = 0; i < numberOfEnemies; i++)
+            {
+                var x = Random.Range(mostLeft + 1, mostRight - 1);
+                var y = Random.Range(mostDown + 1, mostUp - 1);
+                var e = Instantiate(enemyPrefab, transform);
+                e.Setup(enemyAssets[Random.Range(0, enemyAssets.Length)]);
+                e.transform.position = new Vector3(x, y, 0);
+            }
+        }
+
         //Generate door: calculate door position then 
         doorWays = CalculateDoor();
         foreach (var doorWay in doorWays)
@@ -257,15 +273,6 @@ public class RoomObject : Singleton<RoomObject>
                 tilemap.SetTile(new Vector3Int(door.tiles[i].x, door.tiles[i].y, 0), tileArray[i]);
                 roomTileData[door.tiles[i].y * sceneTileSize.x + door.tiles[i].x] = TileType.Door;
             }
-        }
-    }
-
-    private void GenerateEnemy()
-    {
-        var numberOfEnemies = 4;
-        for (int i = 0; i < numberOfEnemies; i++)
-        {
-            var e = Instantiate(enemyPrefab);
         }
     }
 

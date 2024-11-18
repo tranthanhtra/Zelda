@@ -70,6 +70,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hp: 0
   speed: 3
+  spriteLibrary: {fileID: 580492345962341711}
 --- !u!61 &5217843035908970644
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -187,8 +188,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -311950621
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: -440923311, guid: c90a201e37e393249bdf1f25e062c4b2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -213,8 +214,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CategoryHash: 7.730857e-10
-  m_labelHash: 2.186479e-31
+  m_CategoryHash: 4.0412714e-32
+  m_labelHash: 6.3466986e-14
   m_SpriteKey: 0
   m_SpriteHash: 1051496666
 --- !u!114 &580492345962341711

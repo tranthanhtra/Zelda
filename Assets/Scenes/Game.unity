@@ -248,6 +248,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8f4a5f73d2180ed4dab3f4407fe6bcb7, type: 2}
   emptyTile: {fileID: 11400000, guid: 34ccb1e1bf171474e820b40dd02337b7, type: 2}
   enemyPrefab: {fileID: 4262873677049569988, guid: 40ffc1b981697204c86323d421e00799, type: 3}
+  enemyAssets:
+  - {fileID: 7108339969198208228, guid: 767c71ddede7b594b9394ea47990e08c, type: 3}
+  - {fileID: 7108339969198208228, guid: 5ffd41fbf00447f49a620780c492d327, type: 3}
+  - {fileID: 7108339969198208228, guid: 13d1b064b13d12f4c9345e729def7086, type: 3}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
