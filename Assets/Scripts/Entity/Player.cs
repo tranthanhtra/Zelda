@@ -5,42 +5,64 @@ using UnityEngine;
 
 public class Player : Entity
 {
+    private static readonly int Swing = Animator.StringToHash("TriggerSwing");
+
+    private void Awake()
+    {
+        GoDown();
+    }
+
     private void Update()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
+            SwingSword();
+        }
+        else if (Input.GetKey(KeyCode.UpArrow))
+        {
+            GoUp();
             if (RoomObject.Instance.CheckInBounds(this, Vector2.up))
                 // Handle up key press
-                GoUp();
+                Go();
             else
                 Stop();
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
+            GoDown();
             if (RoomObject.Instance.CheckInBounds(this, Vector2.down))
-                GoDown();
+                Go();
             else
                 Stop();
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
+            GoLeft();
             if (RoomObject.Instance.CheckInBounds(this, Vector2.left))
                 // Handle left key press
-                GoLeft();
+                Go();
             else
                 Stop();
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
+            GoRight();
             if (RoomObject.Instance.CheckInBounds(this, Vector2.right))
                 // Handle right key press
-                GoRight();
+                Go();
             else
                 Stop();
         }
+
         else
         {
             Stop();
         }
+    }
+
+    private void SwingSword()
+    {
+        Stop();
+        animator.SetTrigger(Swing);
     }
 }

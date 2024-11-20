@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hp: 0
-  speed: 3
+  speed: 1.5
   spriteLibrary: {fileID: 580492345962341711}
 --- !u!61 &5217843035908970644
 BoxCollider2D:

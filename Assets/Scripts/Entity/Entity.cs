@@ -10,6 +10,7 @@ public abstract class Entity : MonoBehaviour
     public int hp;
     public float speed;
     protected Vector2 movement;
+    protected float velocity;
 
     protected Rigidbody2D rigidbody2D;
     protected BoxCollider2D _collider2D;
@@ -29,10 +30,10 @@ public abstract class Entity : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        transform.Translate(movement * (speed * Time.deltaTime));
+        transform.Translate(movement * (velocity * (speed * Time.deltaTime)));
         animator.SetFloat(Horizontal, movement.x);
         animator.SetFloat(Vertical, movement.y);
-        animator.SetFloat(Velocity, movement.sqrMagnitude);
+        animator.SetFloat(Velocity, velocity);
     }
 
     protected void GoLeft()
@@ -57,6 +58,11 @@ public abstract class Entity : MonoBehaviour
 
     protected void Stop()
     {
-        movement = Vector2.zero;
+       velocity = 0;
+    }
+
+    protected void Go()
+    {
+        velocity = speed;
     }
 }
