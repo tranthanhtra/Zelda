@@ -7,7 +7,6 @@ public class Player : Entity
 {
     private static readonly int Swing = Animator.StringToHash("TriggerSwing");
     [SerializeField] private SpriteRenderer spriteRenderer;
-
     private void Awake()
     {
         GoDown();

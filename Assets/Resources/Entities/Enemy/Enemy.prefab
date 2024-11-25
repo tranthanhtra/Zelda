@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c51c6b61229d3747bf5681b3fa5ce6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 0
+  hp: 1
   speed: 1.5
   spriteLibrary: {fileID: 580492345962341711}
 --- !u!61 &5217843035908970644

@@ -66,5 +66,10 @@ public class Enemy : Entity
             var player = other.gameObject.GetComponent<Player>();
             player.TakeDamage(1);
         }
+
+        if (other.gameObject.CompareTag("Sword"))
+        {
+            TakeDamage(1);
+        }
     }
 }
