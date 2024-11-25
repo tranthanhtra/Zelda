@@ -24,7 +24,7 @@ public class Enemy : Entity
     {
         movement = directions[Random.Range(0, directions.Length)];
         changeDirectionTime = Random.Range(1f, 4f);
-        speed = Random.Range(2, 3);
+        speed = Random.Range(1, 1.5f);
         Go();
     }
 
@@ -53,5 +53,18 @@ public class Enemy : Entity
     public void Setup(SpriteLibraryAsset sprite)
     {
         spriteLibrary.spriteLibraryAsset = sprite;
+    }
+
+    public override void Die()
+    {
+        gameObject.SetActive(false);
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            var player = other.gameObject.GetComponent<Player>();
+            player.TakeDamage(1);
+        }
     }
 }

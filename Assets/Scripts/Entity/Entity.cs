@@ -11,6 +11,7 @@ public abstract class Entity : MonoBehaviour
     public float speed;
     protected Vector2 movement;
     protected float velocity;
+    protected bool isImmune;
 
     protected Rigidbody2D rigidbody2D;
     protected BoxCollider2D _collider2D;
@@ -65,4 +66,15 @@ public abstract class Entity : MonoBehaviour
     {
         velocity = speed;
     }
+    
+    public virtual void TakeDamage(int damage)
+    {
+        hp -= damage;
+        if (hp <= 0)
+        {
+            Die();
+        }
+    }
+
+    public abstract void Die();
 }

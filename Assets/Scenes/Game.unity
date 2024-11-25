@@ -698,15 +698,44 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 1803464984797436351, guid: 9da328297d4a97a4fb52a195720384fc, type: 3}
+      propertyPath: m_Mass
+      value: 0.0001
+      objectReference: {fileID: 0}
+    - target: {fileID: 1803464984797436351, guid: 9da328297d4a97a4fb52a195720384fc, type: 3}
+      propertyPath: m_BodyType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1803464984797436351, guid: 9da328297d4a97a4fb52a195720384fc, type: 3}
+      propertyPath: m_AngularDrag
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1803464984797436351, guid: 9da328297d4a97a4fb52a195720384fc, type: 3}
+      propertyPath: m_GravityScale
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4302282536697395587, guid: 9da328297d4a97a4fb52a195720384fc, type: 3}
-      propertyPath: speed
-      value: 2
+      propertyPath: hp
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4302282536697395587, guid: 9da328297d4a97a4fb52a195720384fc, type: 3}
+      propertyPath: spriteRenderer
+      value: 
+      objectReference: {fileID: 1961377386}
+    - target: {fileID: 7230314022016893566, guid: 9da328297d4a97a4fb52a195720384fc, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9da328297d4a97a4fb52a195720384fc, type: 3}
+--- !u!212 &1961377386 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 1688650282725511914, guid: 9da328297d4a97a4fb52a195720384fc, type: 3}
+  m_PrefabInstance: {fileID: 658045964}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

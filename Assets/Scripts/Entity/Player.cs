@@ -6,6 +6,7 @@ using UnityEngine;
 public class Player : Entity
 {
     private static readonly int Swing = Animator.StringToHash("TriggerSwing");
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
@@ -64,5 +65,33 @@ public class Player : Entity
     {
         Stop();
         animator.SetTrigger(Swing);
+    }
+
+    public override void TakeDamage(int damage)
+    {
+        if (isImmune) return;
+        isImmune = true;
+        Debug.Log("hit");
+        base.TakeDamage(damage);
+        StartCoroutine(Flicker());
+    }
+
+    public override void Die()
+    {
+        Debug.Log("game over");
+    }
+
+    private IEnumerator Flicker()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            spriteRenderer.enabled = !spriteRenderer.enabled;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        spriteRenderer.enabled = true;
+        yield return new WaitForSeconds(0.2f);
+
+        isImmune = false;
     }
 }
