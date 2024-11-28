@@ -58,6 +58,7 @@ public class Enemy : Entity
     public override void Die()
     {
         gameObject.SetActive(false);
+        RoomObject.Instance.CheckOpenDoor();
     }
     void OnTriggerEnter2D(Collider2D other)
     {

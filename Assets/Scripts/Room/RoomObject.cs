@@ -30,6 +30,7 @@ public class RoomObject : Singleton<RoomObject>
     private Vector2Int sceneTileSize;
     private TileType[] roomTileData;
     private Door[] doorWays;
+    private List<Enemy> listEnemies = new ();
 
     void Start()
     {
@@ -156,6 +157,7 @@ public class RoomObject : Singleton<RoomObject>
                 var e = Instantiate(enemyPrefab, transform);
                 e.Setup(enemyAssets[Random.Range(0, enemyAssets.Length)]);
                 e.transform.position = new Vector3(x, y, 0);
+                listEnemies.Add(e);
             }
         }
 
@@ -276,6 +278,21 @@ public class RoomObject : Singleton<RoomObject>
         }
     }
 
+    #endregion
+    
+    #region GameEvent
+
+    public void CheckOpenDoor()
+    {
+        if (listEnemies.All(x => x.hp == 0))
+        {
+            foreach (var door in doorWays)
+            {
+                door.isOpen = true;
+            }
+            SetupDoors();
+        }
+    }
     #endregion
 }
 
