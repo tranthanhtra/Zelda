@@ -6,7 +6,7 @@ using UnityEngine.Tilemaps;
 using UnityEngine.U2D.Animation;
 using static Utils.Constants;
 
-public class RoomObject : Singleton<RoomObject>
+public class RoomObject : MonoBehaviour
 {
     [SerializeField] private Tilemap tilemap;
 
@@ -167,47 +167,46 @@ public class RoomObject : Singleton<RoomObject>
         {
             Vector2Int[] doorTiles = { };
 
-            switch (doorWay.direction)
+            if (doorWay.direction == Vector2Int.left)
             {
-                case DoorDirection.Left:
-                    doorTiles = new Vector2Int[]
-                    {
-                        new Vector2Int(mostLeft - 1, mostDown + RoomSize.y / 2 + 1),
-                        new Vector2Int(mostLeft, mostDown + RoomSize.y / 2 + 1),
-                        new Vector2Int(mostLeft, mostDown + RoomSize.y / 2),
-                        new Vector2Int(mostLeft - 1, mostDown + RoomSize.y / 2),
-                    };
-
-                    break;
-                case DoorDirection.Right:
-                    doorTiles = new Vector2Int[]
-                    {
-                        new Vector2Int(mostRight, mostDown + RoomSize.y / 2 + 1),
-                        new Vector2Int(mostRight + 1, mostDown + RoomSize.y / 2 + 1),
-                        new Vector2Int(mostRight + 1, mostDown + RoomSize.y / 2),
-                        new Vector2Int(mostRight, mostDown + RoomSize.y / 2),
-                    };
-                    break;
-                case DoorDirection.Down:
-                    doorTiles = new Vector2Int[]
-                    {
-                        new Vector2Int(mostLeft + RoomSize.x / 2, mostDown),
-                        new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostDown),
-                        new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostDown - 1),
-                        new Vector2Int(mostLeft + RoomSize.x / 2, mostDown - 1),
-                    };
-
-                    break;
-                case DoorDirection.Up:
-                    doorTiles = new Vector2Int[]
-                    {
-                        new Vector2Int(mostLeft + RoomSize.x / 2, mostUp + 1),
-                        new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostUp + 1),
-                        new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostUp),
-                        new Vector2Int(mostLeft + RoomSize.x / 2, mostUp),
-                    };
-
-                    break;
+                doorTiles = new Vector2Int[]
+                {
+                    new Vector2Int(mostLeft - 1, mostDown + RoomSize.y / 2 + 1),
+                    new Vector2Int(mostLeft, mostDown + RoomSize.y / 2 + 1),
+                    new Vector2Int(mostLeft, mostDown + RoomSize.y / 2),
+                    new Vector2Int(mostLeft - 1, mostDown + RoomSize.y / 2),
+                };
+            }
+            else if (doorWay.direction == Vector2Int.right)
+            {
+                
+                doorTiles = new Vector2Int[]
+                {
+                    new Vector2Int(mostRight, mostDown + RoomSize.y / 2 + 1),
+                    new Vector2Int(mostRight + 1, mostDown + RoomSize.y / 2 + 1),
+                    new Vector2Int(mostRight + 1, mostDown + RoomSize.y / 2),
+                    new Vector2Int(mostRight, mostDown + RoomSize.y / 2),
+                };
+            }
+            else if (doorWay.direction == Vector2Int.up)
+            {
+                doorTiles = new Vector2Int[]
+                {
+                    new Vector2Int(mostLeft + RoomSize.x / 2, mostUp + 1),
+                    new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostUp + 1),
+                    new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostUp),
+                    new Vector2Int(mostLeft + RoomSize.x / 2, mostUp),
+                };
+            }
+            else if (doorWay.direction == Vector2Int.down)
+            {
+                doorTiles = new Vector2Int[]
+                {
+                    new Vector2Int(mostLeft + RoomSize.x / 2, mostDown),
+                    new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostDown),
+                    new Vector2Int(mostLeft + RoomSize.x / 2 + 1, mostDown - 1),
+                    new Vector2Int(mostLeft + RoomSize.x / 2, mostDown - 1),
+                };
             }
 
             doorWay.tiles = doorTiles;
@@ -221,7 +220,7 @@ public class RoomObject : Singleton<RoomObject>
 
     #region Public Methods
 
-    public bool CheckInBounds(Entity entity, Vector2 direction)
+    public bool CheckInBounds(Entity entity, Vector2Int direction)
     {
         Vector2 checkpoint = ((Vector2)entity.transform.position + Vector2.down * entity.Collider2D.size.y / 3) +
                              new Vector2(direction.x * entity.Collider2D.size.x / 2,
@@ -230,7 +229,29 @@ public class RoomObject : Singleton<RoomObject>
 
         var tilePosition = new Vector2Int(Mathf.FloorToInt(checkpoint.x), Mathf.FloorToInt(checkpoint.y));
 
+        var tile = roomTileData[tilePosition.y * sceneTileSize.x + tilePosition.x];
+        if (tile == TileType.Door)
+        {
+            if (doorWays.First(x => x.direction == direction).isOpen)
+            {
+                Dungeon.Instance.MoveToNextRoom(direction);
+            }
+        }
+            
         return roomTileData[tilePosition.y * sceneTileSize.x + tilePosition.x] == TileType.Ground;
+    }
+
+    public void CheckTouchDoor(Player player, Vector2 direction)
+    {
+        Vector2 checkpoint = ((Vector2)player.transform.position + Vector2.down * player.Collider2D.size.y / 3) +
+                             new Vector2(direction.x * player.Collider2D.size.x / 2,
+                                 direction.y * player.Collider2D.size.y / 6) -
+                             (Vector2)tilemap.transform.position;
+
+        var tilePosition = new Vector2Int(Mathf.FloorToInt(checkpoint.x), Mathf.FloorToInt(checkpoint.y));
+
+
+        
     }
 
     #endregion
@@ -241,10 +262,10 @@ public class RoomObject : Singleton<RoomObject>
     {
         return new Door[]
         {
-            new Door(new Vector2Int[4], DoorDirection.Left),
-            new Door(new Vector2Int[4], DoorDirection.Right),
-            new Door(new Vector2Int[4], DoorDirection.Down),
-            new Door(new Vector2Int[4], DoorDirection.Up),
+            new Door(new Vector2Int[4], Vector2Int.left),
+            new Door(new Vector2Int[4], Vector2Int.right),
+            new Door(new Vector2Int[4], Vector2Int.down),
+            new Door(new Vector2Int[4], Vector2Int.up),
         };
     }
 
@@ -254,21 +275,20 @@ public class RoomObject : Singleton<RoomObject>
         {
             TileBase[] tileArray = new TileBase[4];
 
-            switch (door.direction)
+            if (door.direction == Vector2Int.left)
             {
-                case DoorDirection.Left:
-                    tileArray = door.isOpen ? doorTilesLeftOpen : doorTilesLeftClose;
-                    break;
-                case DoorDirection.Right:
-                    tileArray = door.isOpen ? doorTilesRightOpen : doorTilesRightClose;
-                    break;
-                case DoorDirection.Down:
-                    tileArray = door.isOpen ? doorTilesDownOpen : doorTilesDownClose;
-                    break;
-                case DoorDirection.Up:
-                    tileArray = door.isOpen ? doorTilesUpOpen : doorTilesUpClose;
-                    break;
+                tileArray = door.isOpen ? doorTilesLeftOpen : doorTilesLeftClose;
+            } else if (door.direction == Vector2Int.right)
+            {
+                tileArray = door.isOpen ? doorTilesRightOpen : doorTilesRightClose;
+            } else if (door.direction == Vector2Int.down)
+            {
+                tileArray = door.isOpen ? doorTilesDownOpen : doorTilesDownClose;
+            } else if (door.direction == Vector2Int.up)
+            {
+                tileArray = door.isOpen ? doorTilesUpOpen : doorTilesUpClose;
             }
+            
 
             for (int i = 0; i < door.tiles.Length; i++)
             {

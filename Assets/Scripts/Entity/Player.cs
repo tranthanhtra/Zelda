@@ -21,7 +21,7 @@ public class Player : Entity
         else if (Input.GetKey(KeyCode.UpArrow))
         {
             GoUp();
-            if (RoomObject.Instance.CheckInBounds(this, Vector2.up))
+            if (Dungeon.Instance.CurrentRoom.CheckInBounds(this, Vector2Int.up))
                 // Handle up key press
                 Go();
             else
@@ -30,7 +30,7 @@ public class Player : Entity
         else if (Input.GetKey(KeyCode.DownArrow))
         {
             GoDown();
-            if (RoomObject.Instance.CheckInBounds(this, Vector2.down))
+            if (Dungeon.Instance.CurrentRoom.CheckInBounds(this, Vector2Int.down))
                 Go();
             else
                 Stop();
@@ -38,7 +38,7 @@ public class Player : Entity
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
             GoLeft();
-            if (RoomObject.Instance.CheckInBounds(this, Vector2.left))
+            if (Dungeon.Instance.CurrentRoom.CheckInBounds(this, Vector2Int.left))
                 // Handle left key press
                 Go();
             else
@@ -47,7 +47,7 @@ public class Player : Entity
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             GoRight();
-            if (RoomObject.Instance.CheckInBounds(this, Vector2.right))
+            if (Dungeon.Instance.CurrentRoom.CheckInBounds(this, Vector2Int.right))
                 // Handle right key press
                 Go();
             else

@@ -8,13 +8,13 @@ using Random = UnityEngine.Random;
 public class Enemy : Entity
 {
     [SerializeField] private SpriteLibrary spriteLibrary;
-    
-    private static Vector2[] directions = new[]
+
+    private static Vector2Int[] directions = new[]
     {
-        new Vector2(0, 1), // up
-        new Vector2(0, -1), // down
-        new Vector2(1, 0), // right
-        new Vector2(-1, 0) // left
+        new Vector2Int(0, 1), // up
+        new Vector2Int(0, -1), // down
+        new Vector2Int(1, 0), // right
+        new Vector2Int(-1, 0) // left
     };
 
     private float changeDirectionTime;
@@ -30,7 +30,7 @@ public class Enemy : Entity
 
     private void Update()
     {
-        if (!RoomObject.Instance.CheckInBounds(this, movement))
+        if (!Dungeon.Instance.CurrentRoom.CheckInBounds(this, movement))
         {
             movement = directions[Random.Range(0, directions.Length)];
             timeSinceChangedDirection = 0;
@@ -58,7 +58,7 @@ public class Enemy : Entity
     public override void Die()
     {
         gameObject.SetActive(false);
-        RoomObject.Instance.CheckOpenDoor();
+        Dungeon.Instance.CurrentRoom.CheckOpenDoor();
     }
     void OnTriggerEnter2D(Collider2D other)
     {

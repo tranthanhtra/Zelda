@@ -6,10 +6,10 @@ using UnityEngine.Tilemaps;
 public class Door
 {
     public Vector2Int[] tiles;
-    public DoorDirection direction;
+    public Vector2Int direction;
     public bool isOpen = false;
 
-    public Door(Vector2Int[] tiles, DoorDirection direction)
+    public Door(Vector2Int[] tiles, Vector2Int direction)
     {
         this.tiles = tiles;
         this.direction = direction;

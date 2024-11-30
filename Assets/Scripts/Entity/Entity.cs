@@ -1,15 +1,10 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public abstract class Entity : MonoBehaviour
 {
     public int hp;
     public float speed;
-    protected Vector2 movement;
+    protected Vector2Int movement;
     protected float velocity;
     protected bool isImmune;
 
@@ -31,7 +26,7 @@ public abstract class Entity : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
-        transform.Translate(movement * (velocity * (speed * Time.deltaTime)));
+        transform.Translate((Vector2)movement * (velocity * (speed * Time.deltaTime)));
         animator.SetFloat(Horizontal, movement.x);
         animator.SetFloat(Vertical, movement.y);
         animator.SetFloat(Velocity, velocity);
@@ -39,22 +34,22 @@ public abstract class Entity : MonoBehaviour
 
     protected void GoLeft()
     {
-        movement = Vector2.left;
+        movement = Vector2Int.left;
     }
 
     protected void GoRight()
     {
-        movement = Vector2.right;
+        movement = Vector2Int.right;
     }
 
     protected void GoUp()
     {
-        movement = Vector2.up;
+        movement = Vector2Int.up;
     }
 
     protected void GoDown()
     {
-        movement = Vector2.down;
+        movement = Vector2Int.down;
     }
 
     protected void Stop()
