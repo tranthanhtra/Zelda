@@ -156,7 +156,7 @@ public class RoomObject : MonoBehaviour
                 var y = Random.Range(mostDown + 1, mostUp - 1);
                 var e = Instantiate(enemyPrefab, transform);
                 e.Setup(enemyAssets[Random.Range(0, enemyAssets.Length)]);
-                e.transform.position = new Vector3(x, y, 0);
+                e.transform.localPosition = new Vector3(x, y, 0);
                 listEnemies.Add(e);
             }
         }
@@ -215,7 +215,7 @@ public class RoomObject : MonoBehaviour
         SetupDoors();
         GenerateEnemy();
 
-        transform.position = new Vector3(-RoomSize.x / 2 - mostLeft, -RoomSize.y / 2 - mostDown, 0);
+        transform.localPosition =new Vector3(-RoomSize.x / 2 - mostLeft, -RoomSize.y / 2 - mostDown, 0);
     }
 
     #region Public Methods
@@ -232,27 +232,17 @@ public class RoomObject : MonoBehaviour
         var tile = roomTileData[tilePosition.y * sceneTileSize.x + tilePosition.x];
         if (tile == TileType.Door)
         {
-            if (doorWays.First(x => x.direction == direction).isOpen)
+            var door = doorWays.First(x => x.direction == direction);
+            if (door.isOpen)
             {
-                Dungeon.Instance.MoveToNextRoom(direction);
+                Dungeon.Instance.MoveToNextRoom(door.direction);
             }
         }
             
         return roomTileData[tilePosition.y * sceneTileSize.x + tilePosition.x] == TileType.Ground;
     }
 
-    public void CheckTouchDoor(Player player, Vector2 direction)
-    {
-        Vector2 checkpoint = ((Vector2)player.transform.position + Vector2.down * player.Collider2D.size.y / 3) +
-                             new Vector2(direction.x * player.Collider2D.size.x / 2,
-                                 direction.y * player.Collider2D.size.y / 6) -
-                             (Vector2)tilemap.transform.position;
-
-        var tilePosition = new Vector2Int(Mathf.FloorToInt(checkpoint.x), Mathf.FloorToInt(checkpoint.y));
-
-
-        
-    }
+    public void StopAllEnemy() => listEnemies.ForEach(x => x.Stop());
 
     #endregion
 

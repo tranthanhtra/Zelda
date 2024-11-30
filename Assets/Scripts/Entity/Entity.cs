@@ -52,7 +52,7 @@ public abstract class Entity : MonoBehaviour
         movement = Vector2Int.down;
     }
 
-    protected void Stop()
+    public void Stop()
     {
        velocity = 0;
     }
