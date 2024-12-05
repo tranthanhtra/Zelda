@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.U2D.Animation;
 using static Utils.Constants;
+using Random = UnityEngine.Random;
 
 public class RoomObject : MonoBehaviour
 {
@@ -24,13 +26,15 @@ public class RoomObject : MonoBehaviour
     [SerializeField] private TileBase emptyTile;
 
     [SerializeField] private Enemy enemyPrefab;
+
     [SerializeField] private SpriteLibraryAsset[] enemyAssets;
     // Start is called before the first frame update
 
     private Vector2Int sceneTileSize;
     private TileType[] roomTileData;
     private Door[] doorWays;
-    private List<Enemy> listEnemies = new ();
+    private List<Enemy> listEnemies = new();
+    private bool enemyStartState;
 
     void Start()
     {
@@ -152,8 +156,8 @@ public class RoomObject : MonoBehaviour
             var numberOfEnemies = 4;
             for (int i = 0; i < numberOfEnemies; i++)
             {
-                var x = Random.Range(mostLeft + 1, mostRight - 1);
-                var y = Random.Range(mostDown + 1, mostUp - 1);
+                var x = Random.Range(mostLeft + 2, mostRight - 2);
+                var y = Random.Range(mostDown + 2, mostUp - 2);
                 var e = Instantiate(enemyPrefab, transform);
                 e.Setup(enemyAssets[Random.Range(0, enemyAssets.Length)]);
                 e.transform.localPosition = new Vector3(x, y, 0);
@@ -179,7 +183,6 @@ public class RoomObject : MonoBehaviour
             }
             else if (doorWay.direction == Vector2Int.right)
             {
-                
                 doorTiles = new Vector2Int[]
                 {
                     new Vector2Int(mostRight, mostDown + RoomSize.y / 2 + 1),
@@ -215,7 +218,9 @@ public class RoomObject : MonoBehaviour
         SetupDoors();
         GenerateEnemy();
 
-        transform.localPosition =new Vector3(-RoomSize.x / 2 - mostLeft, -RoomSize.y / 2 - mostDown, 0);
+        transform.localPosition = new Vector3(-RoomSize.x / 2 - mostLeft, -RoomSize.y / 2 - mostDown, 0);
+
+        StartCoroutine(StartEnemy());
     }
 
     #region Public Methods
@@ -229,20 +234,38 @@ public class RoomObject : MonoBehaviour
 
         var tilePosition = new Vector2Int(Mathf.FloorToInt(checkpoint.x), Mathf.FloorToInt(checkpoint.y));
 
-        var tile = roomTileData[tilePosition.y * sceneTileSize.x + tilePosition.x];
-        if (tile == TileType.Door)
+        try
         {
-            var door = doorWays.First(x => x.direction == direction);
-            if (door.isOpen)
-            {
-                Dungeon.Instance.MoveToNextRoom(door.direction);
-            }
+            var tile = roomTileData[tilePosition.y * sceneTileSize.x + tilePosition.x];
+
+            if (!Dungeon.Instance.isTransitioning)
+                if (tile == TileType.Door)
+                {
+                    var door = doorWays.First(x => x.direction == direction);
+                    if (door.isOpen)
+                    {
+                        Dungeon.Instance.MoveToNextRoom(door.direction);
+                    }
+                }
+
+            return tile == TileType.Ground;
         }
-            
-        return roomTileData[tilePosition.y * sceneTileSize.x + tilePosition.x] == TileType.Ground;
+        catch (Exception e)
+        {
+            Debug.Log(checkpoint);
+            return false;
+        }
     }
 
-    public void StopAllEnemy() => listEnemies.ForEach(x => x.Stop());
+    public void StopAllEnemy()
+    {
+        listEnemies.ForEach(x => x.Stop());
+    }
+
+    public void StartAllEnemy()
+    {
+        listEnemies.ForEach(x => x.Go());
+    }
 
     #endregion
 
@@ -268,17 +291,20 @@ public class RoomObject : MonoBehaviour
             if (door.direction == Vector2Int.left)
             {
                 tileArray = door.isOpen ? doorTilesLeftOpen : doorTilesLeftClose;
-            } else if (door.direction == Vector2Int.right)
+            }
+            else if (door.direction == Vector2Int.right)
             {
                 tileArray = door.isOpen ? doorTilesRightOpen : doorTilesRightClose;
-            } else if (door.direction == Vector2Int.down)
+            }
+            else if (door.direction == Vector2Int.down)
             {
                 tileArray = door.isOpen ? doorTilesDownOpen : doorTilesDownClose;
-            } else if (door.direction == Vector2Int.up)
+            }
+            else if (door.direction == Vector2Int.up)
             {
                 tileArray = door.isOpen ? doorTilesUpOpen : doorTilesUpClose;
             }
-            
+
 
             for (int i = 0; i < door.tiles.Length; i++)
             {
@@ -289,7 +315,7 @@ public class RoomObject : MonoBehaviour
     }
 
     #endregion
-    
+
     #region GameEvent
 
     public void CheckOpenDoor()
@@ -300,9 +326,22 @@ public class RoomObject : MonoBehaviour
             {
                 door.isOpen = true;
             }
+
             SetupDoors();
         }
     }
+
+    #endregion
+
+    #region Coroutine
+
+    private IEnumerator StartEnemy()
+    {
+        yield return new WaitUntil(() => this == Dungeon.Instance.CurrentRoom);
+        yield return new WaitForSeconds(Time.deltaTime);
+        StartAllEnemy();
+    }
+
     #endregion
 }
 

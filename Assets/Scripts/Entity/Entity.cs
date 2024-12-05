@@ -17,7 +17,7 @@ public abstract class Entity : MonoBehaviour
 
     public BoxCollider2D Collider2D => _collider2D;
 
-    private void Start()
+    protected virtual void Start()
     {
         rigidbody2D = GetComponent<Rigidbody2D>();
         _collider2D = GetComponent<BoxCollider2D>();
@@ -57,7 +57,7 @@ public abstract class Entity : MonoBehaviour
        velocity = 0;
     }
 
-    protected void Go()
+    public void Go()
     {
         velocity = speed;
     }

@@ -25,7 +25,6 @@ public class Enemy : Entity
         movement = directions[Random.Range(0, directions.Length)];
         changeDirectionTime = Random.Range(1f, 4f);
         speed = Random.Range(1, 1.5f);
-        // Go();
     }
 
     private void Update()
